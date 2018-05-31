@@ -63,8 +63,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="csvCollection.cs" />
+    <Compile Include="EnglishChinese.cs" />
+    <Compile Include="MongoDBRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TranslationProgram.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
