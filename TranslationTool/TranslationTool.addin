@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Translation Tool</Name>
+    <Assembly>TranslationTool.dll</Assembly>
+    <FullClassName>TranslationTool.App</FullClassName>
+    <ClientId>39d824e4-14e5-43bf-8b0f-87bd73e5b71a</ClientId>
+    <VendorId>Danny Bentley</VendorId>
+    <VendorDescription>Danny Bentley, danny.bentley@som.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>
