@@ -68,6 +68,8 @@
   <ItemGroup>
     <Compile Include="csvCollection.cs" />
     <Compile Include="EnglishChinese.cs" />
+    <Compile Include="IDatabaseRepository.cs" />
+    <Compile Include="IElementRepository.cs" />
     <Compile Include="MongoDBRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TranslationProgram.cs" />
