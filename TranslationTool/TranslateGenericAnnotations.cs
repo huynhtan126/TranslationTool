@@ -1,15 +1,15 @@
 ﻿using Autodesk.Revit.DB;
+using Autodesk.Revit.ApplicationServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace TranslationTool
 {
     internal class TranslateGenericAnnotations
     {
         //***********************************GenericAnnotationTranslation***********************************
-        public void SetEnglishAnnotationByID(Document doc, Application App,
+        public void SetEnglishAnnotationByID(Document doc, Application app,
             Dictionary<string, string> Anno_IDandEnglishDictionary)
         {
             RevitModelElements revit = new RevitModelElements();
@@ -20,17 +20,18 @@ namespace TranslationTool
             {
                 try
                 {
-                    Parameter somID = e.LookupParameter("SOM ID");
+                    //Get the parameters from the project 
+                    Parameter somID_param = e.LookupParameter("SOM ID");
                     Parameter English_param = e.LookupParameter("ENGLISH");
 
                     //Check if parameter exist in project. 
-                    if(somID == null)
-                        somID = CheckIfSharedParamterExist(doc, App, e, somID);
+                    if(somID_param == null)
+                        somID_param = CheckIfSharedParamterExist(doc, app, e, "DYNAMO AND ADD-IN", "SOM ID");
                     if(English_param == null)
-                        English_param = CheckIfSharedParamterExist(doc, App, e, English_param);
-                    
+                        English_param = CheckIfSharedParamterExist(doc, app, e, "TRANSLATION", "ENGLISH");
 
-                    string id = revit.GetParameterValue(e.LookupParameter("SOM ID"));                    
+                    //Get parameter values 
+                    string id = revit.GetParameterValue(somID_param);                    
                     string English = revit.GetParameterValue(English_param);
 
                     if (id != "")
@@ -51,7 +52,7 @@ namespace TranslationTool
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Set English Annotation by ID Exception raised - " + ex.Message);
+                    //MessageBox.Show("Set English Annotation by ID Exception raised - " + ex.Message);
                 }
             }
         }
@@ -69,13 +70,22 @@ namespace TranslationTool
 
             foreach (Element e in GenericAnnotations)
             {
-                // Revit parameters
-                Parameter Id_param = e.LookupParameter("SOM ID");
-                Parameter English_Param = e.LookupParameter("ENGLISH");
+                //Get the parameters from the project 
+                Parameter somID_param = e.LookupParameter("SOM ID");
+                Parameter English_param = e.LookupParameter("ENGLISH");
                 Parameter Chinese_param = e.LookupParameter("CHINESE");
+
+                //Check if parameter exist in project. 
+                if (somID_param == null)
+                    somID_param = CheckIfSharedParamterExist(doc, app, e, "DYNAMO AND ADD-IN", "SOM ID");
+                if (English_param == null)
+                    English_param = CheckIfSharedParamterExist(doc, app, e, "TRANSLATION", "ENGLISH");
+                if (Chinese_param == null)
+                    Chinese_param = CheckIfSharedParamterExist(doc, app, e, "TRANSLATION", "CHINESE");
+
                 // Revit parameter values.
-                string id = revit.GetParameterValue(Id_param);
-                string English = revit.GetParameterValue(English_Param);
+                string id = revit.GetParameterValue(somID_param);
+                string English = revit.GetParameterValue(English_param);
                 string Chinese = revit.GetParameterValue(Chinese_param);
 
                 if (Chinese == "" || Chinese == null)
@@ -95,13 +105,13 @@ namespace TranslationTool
                             //Check if key value exist in dictionary.
                             string key = Excel_Anno_DictionaryIDandEnglishDictionary.FirstOrDefault(x => x.Value == English).Key;
                             if (key != "" || key != null)
-                                Id_param.Set(key);
+                                somID_param.Set(key);
                             //Generate a key if doesn't have one.
                             if (key == "" || key == null)
                             {
                                 //Add new ID if no Id is assigned. 
                                 id = NewKeyId(Excel_Anno_DictionaryIDandEnglishDictionary, revit);
-                                Id_param.Set(id);
+                                somID_param.Set(id);
                                 string[] array = new string[4];
                                 array[0] = id;
                                 array[1] = English;
@@ -139,11 +149,14 @@ namespace TranslationTool
         }
 
         //***********************************CheckIfSharedParamterExist***********************************
-        public Parameter CheckIfSharedParamterExist(Document doc, Application App, Element e, string parameterName)
+        public Parameter CheckIfSharedParamterExist(Document doc, Application app, Element e, 
+            string groupName, string parameterName)
             {
             RevitParametersCheck revitParameters = new RevitParametersCheck();
             Parameter newParameter = new Parameter();
-            revitParameters(doc, App, BuiltInCategory.OST_GenericAnnotation, parameterName);
+
+            revitParameters.CreateSharedParameters(doc, app, BuiltInCategory.OST_GenericAnnotation, 
+                groupName, parameterName);
             newParameter = e.LookupParameter(parameterName);
             return newParameter;
 }

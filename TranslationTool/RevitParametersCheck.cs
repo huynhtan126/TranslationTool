@@ -12,11 +12,12 @@ namespace TranslationTool
 {
     class RevitParametersCheck
     {
-        public void CreateSharedParameters(Document doc, Application app, BuiltInCategory builtInCategory, string ParameterName)
+        public void CreateSharedParameters(Document doc, Application app, BuiltInCategory builtInCategory, 
+            string groupName ,string ParameterName)
         {
-            Category sheetCategory = doc.Settings.Categories.get_Item(builtInCategory);
+            Category Category = doc.Settings.Categories.get_Item(builtInCategory);
             CategorySet categorySet = app.Create.NewCategorySet();
-            categorySet.Insert(category);
+            categorySet.Insert(Category);
 
             string originalFile = app.SharedParametersFilename;
             string tempFile = @"X:\Revit\Revit Support\SOM-Structural Parameters.txt";
@@ -29,17 +30,17 @@ namespace TranslationTool
 
                 foreach (DefinitionGroup dg in sharedParameterFile.Groups)
                 {
-                    if (dg.Name == "DYNAMO AND ADD-IN")
+                    if (dg.Name == groupName)
                     {
-                        ExternalDefinition externalDefinition = dg.Definitions.get_Item("GROUP 1") as ExternalDefinition;
+                        ExternalDefinition externalDefinition = dg.Definitions.get_Item(ParameterName) as ExternalDefinition;
 
                         using (Transaction t = new Transaction(doc))
                         {
-                            t.Start("Add Shared Parameters");
+                            t.Start("Add Translation Shared Parameters");
                             //parameter binding 
                             InstanceBinding newIB = app.Create.NewInstanceBinding(categorySet);
-                            //parameter group to text
-                            doc.ParameterBindings.Insert(externalDefinition, newIB, BuiltInParameterGroup.PG_DATA);
+                            //parameter group to Identity Data in Revit Parameters
+                            doc.ParameterBindings.Insert(externalDefinition, newIB, BuiltInParameterGroup.PG_IDENTITY_DATA);
                             doc.Regenerate();
                             t.Commit();
                         }
