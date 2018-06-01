@@ -9,10 +9,10 @@ namespace TranslationDatabase
 {
     class EnglishChinese
     {
-        internal string Id { get; set; }
+        public string ItemId { get; set; }
 
-        internal string English { get; set; }
+        public string English { get; set; }
 
-        internal string Chinese { get; set; }
+        public string Chinese { get; set; }
     }
 }
