@@ -6,10 +6,11 @@ using System.Web;
 using System.Web.Mvc;
 using TranslationWebDatabase.Models;
 using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace TranslationWebDatabase.Controllers
 {
-    public class TranslationController : Controller
+    public class TranslationController : Controller : I
     {
         MongoContext _dbContext;
         public TranslationController()
@@ -43,8 +44,8 @@ namespace TranslationWebDatabase.Controllers
         [HttpPost]
         public ActionResult Create(TranslationE2C_Model translationE2C_model)
         {
-            var document = _dbContext._database.GetCollection<BsonDocument>("English2Chinese");
-
+            var document = _dbContext._database.GetCollection<BsonDocument>("translateE2C_model");
+            
             var query = Query.And(Query.EQ("ItemId", translationE2C_model.ItemId), Query.EQ("English", translationE2C_model.English));
 
             var count = document.FindAs<translationE2C_model>(query).Count();
@@ -55,7 +56,7 @@ namespace TranslationWebDatabase.Controllers
             }
             else
             {
-                TempData["Message"] = "Carname ALready Exist";
+                TempData["Message"] = "Translation Already Exist";
                 return View("Create", translationE2C_model);
             }
         }

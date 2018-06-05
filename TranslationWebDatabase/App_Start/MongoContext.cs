@@ -26,7 +26,7 @@ namespace TranslationWebDatabase.App_Start
             //Creating MongoClientSettings
             var settings = new MongoClientSettings
             {
-                Credentials = new { credential },
+                Credential = credential,
                 Server = new MongoServerAddress(MongoHost, Convert.ToInt32(MongoPort))
             };
 
