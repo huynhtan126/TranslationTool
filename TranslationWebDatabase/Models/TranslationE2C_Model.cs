@@ -5,6 +5,9 @@ namespace TranslationWebDatabase.Models
 {
     public class TranslationE2C_Model
     {
+        [BsonId]
+        public ObjectId Id { get; set; }
+
         [BsonElement("ItemId")]
         public string ItemId { get; set; }
 

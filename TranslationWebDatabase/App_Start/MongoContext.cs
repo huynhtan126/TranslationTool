@@ -1,38 +1,71 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Driver.Builders;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
+using TranslationWebDatabase.Models;
+using System.Linq;
 
 namespace TranslationWebDatabase.App_Start
 {
     public class MongoContext
     {
-
-        MongoClient _client;
+        private MongoClient _client;
         public IMongoDatabase _database;
+        public IMongoCollection<TranslationE2C_Model> _collection;
 
+        //***********************************MongoContext***********************************
         public MongoContext()
         {
             //Reading credentials from Web.config file
             var MongoDatabaseName = ConfigurationManager.AppSettings["MongoDatabaseName"];
-            var MongoUsername = ConfigurationManager.AppSettings["MongoUsername"];
-            var MongoPassword = ConfigurationManager.AppSettings["MongoPassword"];
-            var MongoPort = ConfigurationManager.AppSettings["MongoPort"];  //27017  
-            var MongoHost = ConfigurationManager.AppSettings["MongoHost"];
+            var MongoDatabaseHost = ConfigurationManager.AppSettings["MongoDatabaseHost"];
 
             //Creating credentials 
-            var credential = MongoCredential.CreateMongoCRCredential(
-                MongoDatabaseName, MongoUsername, MongoPassword);
+            _client = new MongoClient(MongoDatabaseHost);
+            var db = _client.GetDatabase(MongoDatabaseName);
+            _collection = db.GetCollection<TranslationE2C_Model>("translateE2C_model");
+        }
 
-            //Creating MongoClientSettings
-            var settings = new MongoClientSettings
-            {
-                Credential = credential,
-                Server = new MongoServerAddress(MongoHost, Convert.ToInt32(MongoPort))
-            };
+        //***********************************findAll***********************************
+        public List<TranslationE2C_Model> findAll()
+        {
+            return _collection.AsQueryable<TranslationE2C_Model>().ToList();
+        }
 
-            _client = new MongoClient(settings);
-            //_server = _client.GetServer();
-            _database = _client.GetDatabase(MongoDatabaseName);
+        //***********************************find***********************************
+        public TranslationE2C_Model find(string id)
+        {
+            var translationId = new ObjectId(id);
+
+            return _collection.AsQueryable<TranslationE2C_Model>().SingleOrDefault(x => x.Id == translationId);
+        }
+
+        //***********************************create***********************************
+        public void create(TranslationE2C_Model translate)
+        {
+            _collection.InsertOne(translate);
+        }
+
+        //***********************************update***********************************
+        public void update(TranslationE2C_Model translate)
+        {
+            _collection.UpdateOne(
+                Builders<TranslationE2C_Model>.Filter.Eq("Id", translate.Id),
+                Builders<TranslationE2C_Model>.Update
+                .Set("ItemId", translate.ItemId)
+                .Set("English", translate.English)
+                .Set("Chinese", translate.Chinese)
+                );
+        }
+
+        //***********************************delete***********************************
+        public void delete(string id)
+        {
+            var translationId = new ObjectId(id);
+            TranslationE2C_Model translate = _collection.AsQueryable<TranslationE2C_Model>().SingleOrDefault(x => x.Id == translationId);
+            _collection.DeleteOne(Builders<TranslationE2C_Model>.Filter.Eq("Id", translate.Id));
         }
     }
 }

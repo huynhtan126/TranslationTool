@@ -6,11 +6,12 @@ using System.Web;
 using System.Web.Mvc;
 using TranslationWebDatabase.Models;
 using MongoDB.Bson;
+using MongoDB.Driver.Builders;
 using MongoDB.Driver;
 
 namespace TranslationWebDatabase.Controllers
 {
-    public class TranslationController : Controller : I
+    public class TranslationController : Controller
     {
         MongoContext _dbContext;
         public TranslationController()
@@ -22,14 +23,20 @@ namespace TranslationWebDatabase.Controllers
         // GET: /Translation/
         public ActionResult Index()
         {
-            return View();
+            var translationDetails = new List<TranslationE2C_Model>();
+
+            translationDetails = _dbContext.findAll().ToList();
+
+            return View(translationDetails);
         }
 
         //
         // GET: /Translation/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(string id)
         {
-            return View();
+            var transationId = new TranslationE2C_Model();
+            transationId = _dbContext.find(id);
+            return View(transationId);
         }
 
         //
@@ -44,68 +51,86 @@ namespace TranslationWebDatabase.Controllers
         [HttpPost]
         public ActionResult Create(TranslationE2C_Model translationE2C_model)
         {
-            var document = _dbContext._database.GetCollection<BsonDocument>("translateE2C_model");
+            IMongoCollection<TranslationE2C_Model> document = _dbContext._collection;
             
-            var query = Query.And(Query.EQ("ItemId", translationE2C_model.ItemId), Query.EQ("English", translationE2C_model.English));
+            //var query = Query.And(Query.EQ("ItemId", translationE2C_model.ItemId), Query.EQ("English", translationE2C_model.English));
 
-            var count = document.FindAs<translationE2C_model>(query).Count();
+            //var count = document.FindAs<BsonDocument>(query).Count();
 
-            if (count == 0)
-            {
-                var result = document.InsertOne(translationE2C_model);
-            }
-            else
-            {
-                TempData["Message"] = "Translation Already Exist";
-                return View("Create", translationE2C_model);
-            }
+            //if (count == 0)
+            //{
+
+            //}
+            //else
+            //{
+            //    TempData["Message"] = "Translation Already Exist";
+            //    return View("Create", translationE2C_model);
+            //}
+
+            document.InsertOne(translationE2C_model);
+
+            return RedirectToAction("Index", "Home", new { area = "" }); ;
         }
 
         //
         // GET: /Translation/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(string id)
         {
-            return View();
-        }
+            var translateId = new TranslationE2C_Model();
+            translateId = _dbContext.find(id);
+
+            if (translateId != null)
+            {
+                return View(translateId);
+            }
+            return RedirectToAction("Index");
+        } 
 
         //
         // POST: /Translation/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(string id, TranslationE2C_Model translationModel)
         {
             try
             {
-                // TODO: Add update logic here
+                _dbContext.update(translationModel);
 
                 return RedirectToAction("Index");
             }
             catch
             {
                 return View();
-            }
+            } 
         }
 
         //
         // GET: /Translation/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(string id)
         {
-            return View();
+            var translateId = new TranslationE2C_Model();
+            translateId = _dbContext.find(id);
+
+            if(translateId != null)
+            {
+                return View(translateId);
+            }
+            return RedirectToAction("Index");
         }
 
         //
         // POST: /Translation/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(string id, TranslationE2C_Model translationModel)
         {
             try
             {
-                // TODO: Add delete logic here
+                _dbContext.delete(id);
 
                 return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return RedirectToAction("Index");
             }
         }
     }
