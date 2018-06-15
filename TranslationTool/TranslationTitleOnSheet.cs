@@ -48,8 +48,8 @@ namespace TranslationTool
                         string RvtChinese = revit.GetParameterValue(titleOnSheetChineseParam);
                         string RvtEnglish = revit.GetParameterValue(titleOnSheetParam);
 
-                        //Check if the viewport is on a Z sheet. 
-                        //If viewport is on Z sheet skip over it. 
+                        //Check if the viewport is on a Z sheet.
+                        //If viewport is on Z sheet skip over it.
                         if (viewportID.StartsWith("z") || viewportID.StartsWith("Z"))
                             continue;
 
@@ -108,7 +108,7 @@ namespace TranslationTool
                                     array[2] = RvtChinese;
                                     array[3] = centralFilePath;
                                     NotTranslated.Add(array);
-                                } 
+                                }
                     }
                 }
                 catch (Exception ex)
@@ -135,7 +135,6 @@ namespace TranslationTool
                 String[] values = entry.Value;
                 if (centralFilePath == values[2])
                     DeleteFromExcel.Add(entry.Key, entry.Value);
-                        
             }
             return DeleteFromExcel;
         }

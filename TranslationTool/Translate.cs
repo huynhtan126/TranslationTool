@@ -1,10 +1,6 @@
 ﻿using Autodesk.Revit.ApplicationServices;
-using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
-using Autodesk.Revit.UI;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace TranslationTool
 {
@@ -12,6 +8,7 @@ namespace TranslationTool
     {
         //Viewport titles field.
         public Dictionary<string, string[]> _TitleOnSheet_IDEnglishChineseDict { get; set; }
+
         public Dictionary<string, string[]> _Sheet_IDEnglishChineseDict { get; set; }
         public List<string[]> _UpdateExcelTranslationGenericAnno { get; set; }
         public List<string[]> _NotTranslatedTitleOnSheet { get; set; }
@@ -25,16 +22,21 @@ namespace TranslationTool
             ExcelSheet Excel = new ExcelSheet();
             //Check Excel file for duplicate items to be deleted.
             Excel.Delete(path, 1, 2);
-            #region ANNOTATIONS 
+            // Collect data for annotation 
+            #region ANNOTATIONS
+
             //Dictionary of Annotations.  Key as English and value as Chinese.
             Dictionary<string, string> Excel_Anno_DictioinaryEnglishAndChinese = Excel.Read(path, 1);
             List<string> Excel_AnnotationCompareList = Excel.CompareList;
 
             //Dictionary of English words and Ids.
             Dictionary<string, string> _Anno_IDandEnglishDictionary = Excel._IDandEnglishDictionary;
-            #endregion
 
+            #endregion ANNOTATIONS
+
+            // Collect data for title on sheets 
             #region TITLE ON SHEETS
+
             //Dicationary of title on sheets. Key as English and value as Chinese.
             Dictionary<string, string> TitleOnSheetsDictionary = Excel.Read(path, 2);
             List<string> TitleOnSheetCompareList = Excel.CompareList;
@@ -44,9 +46,12 @@ namespace TranslationTool
 
             //Dictionary of English words and Ids.
             Dictionary<string, string[]> TitleOnSheet_HoldDict = Excel._HoldDictioinary;
-            #endregion
 
+            #endregion TITLE ON SHEETS
+
+            // Collect data for sheets
             #region SHEET NUMBER
+
             //Dictionary of Sheet names. Key as English and value as Chinese.
             Dictionary<string, string> SheetsNameDictionary = Excel.Read(path, 3);
             List<string> SheetNameCompareList = Excel.CompareList;
@@ -56,18 +61,18 @@ namespace TranslationTool
 
             //Dictionary of English words and Ids.
             Dictionary<string, string[]> Sheet_HoldDict = Excel._HoldDictioinary;
-            #endregion
 
+            #endregion SHEET NUMBER
 
             //Update ANNOTATION
             TranslateGenericAnnotations TGA = new TranslateGenericAnnotations();
             if (_Anno_IDandEnglishDictionary != null)
-                TGA.SetEnglishAnnotationByID(doc, App, 
+                TGA.SetEnglishAnnotationByID(doc, App,
                     _Anno_IDandEnglishDictionary);
 
             List<string[]> UpdateExcelTranslationGenericAnno = TGA.GenericAnnotationTranslation(doc, App,
                 Excel_Anno_DictioinaryEnglishAndChinese,
-                _Anno_IDandEnglishDictionary, 
+                _Anno_IDandEnglishDictionary,
                 Excel_AnnotationCompareList);
 
             //Update TITLE ON SHEETS
@@ -87,14 +92,9 @@ namespace TranslationTool
                 SheetNameCompareList,
                 path, centralFilePath);
 
-            //Check Excel file for duplicate  to be deleted.
-            //Excel.Delete(path, 2, 1);
-            //Check Excel file for duplicate items to be deleted.
-            //Excel.Delete(path, 3, 1);
-
             _HoldIsFoundInRevitSheets = TS._HoldIsFoundInRevitSheets;
             _HoldIsFoundInRevitTitleOnSheet = TTOS._HoldIsFoundInRevitTitleOnSheet;
             _UpdateExcelTranslationGenericAnno = UpdateExcelTranslationGenericAnno;
-        }        
+        }
     }
 }

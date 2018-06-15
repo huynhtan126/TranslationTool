@@ -1,5 +1,5 @@
-﻿using Autodesk.Revit.DB;
-using Autodesk.Revit.ApplicationServices;
+﻿using Autodesk.Revit.ApplicationServices;
+using Autodesk.Revit.DB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,18 +20,18 @@ namespace TranslationTool
             {
                 try
                 {
-                    //Get the parameters from the project 
+                    //Get the parameters from the project
                     Parameter somID_param = e.LookupParameter("SOM ID");
                     Parameter English_param = e.LookupParameter("ENGLISH");
 
-                    //Check if parameter exist in project. 
-                    if(somID_param == null)
+                    //Check if parameter exist in project.
+                    if (somID_param == null)
                         somID_param = CheckIfSharedParamterExist(doc, app, e, "DYNAMO AND ADD-IN", "SOM ID");
-                    if(English_param == null)
+                    if (English_param == null)
                         English_param = CheckIfSharedParamterExist(doc, app, e, "TRANSLATION", "ENGLISH");
 
-                    //Get parameter values 
-                    string id = revit.GetParameterValue(somID_param);                    
+                    //Get parameter values
+                    string id = revit.GetParameterValue(somID_param);
                     string English = revit.GetParameterValue(English_param);
 
                     if (id != "")
@@ -70,12 +70,12 @@ namespace TranslationTool
 
             foreach (Element e in GenericAnnotations)
             {
-                //Get the parameters from the project 
+                //Get the parameters from the project
                 Parameter somID_param = e.LookupParameter("SOM ID");
                 Parameter English_param = e.LookupParameter("ENGLISH");
                 Parameter Chinese_param = e.LookupParameter("CHINESE");
 
-                //Check if parameter exist in project. 
+                //Check if parameter exist in project.
                 if (somID_param == null)
                     somID_param = CheckIfSharedParamterExist(doc, app, e, "DYNAMO AND ADD-IN", "SOM ID");
                 if (English_param == null)
@@ -111,7 +111,7 @@ namespace TranslationTool
                                 //Generate a key if doesn't have one.
                                 if (key == "" || key == null)
                                 {
-                                    //Add new ID if no Id is assigned. 
+                                    //Add new ID if no Id is assigned.
                                     id = RandomKeyId(Excel_Anno_DictionaryIDandEnglishDictionary, revit);
                                     somID_param.Set(id);
                                     string[] array = new string[4];
@@ -126,7 +126,7 @@ namespace TranslationTool
                         }
                     }
 
-                    // Check if the english has value. 
+                    // Check if the english has value.
                     if (English != "" || English != null)
                     {
                         //if the dictionary doesn't have translation add to Excel.
@@ -136,12 +136,9 @@ namespace TranslationTool
                             {
                                 if (id == "" || id == null)
                                 {
-
-
-                                    //Add new ID if no Id is assigned. 
+                                    //Add new ID if no Id is assigned.
                                     id = RandomKeyId(Excel_Anno_DictionaryIDandEnglishDictionary, revit);
                                 }
-
 
                                 string[] array = new string[4];
                                 array[0] = id;
@@ -159,25 +156,25 @@ namespace TranslationTool
         }
 
         //***********************************CheckIfSharedParamterExist***********************************
-        public Parameter CheckIfSharedParamterExist(Document doc, Application app, Element e, 
+        public Parameter CheckIfSharedParamterExist(Document doc, Application app, Element e,
             string groupName, string parameterName)
-            {
+        {
             RevitParametersCheck revitParameters = new RevitParametersCheck();
             Parameter newParameter;
 
-            revitParameters.CreateSharedParameters(doc, app, BuiltInCategory.OST_GenericAnnotation, 
+            revitParameters.CreateSharedParameters(doc, app, BuiltInCategory.OST_GenericAnnotation,
                 groupName, parameterName);
             newParameter = e.LookupParameter(parameterName);
             return newParameter;
-}
+        }
 
         //***********************************NewKeyId***********************************
-        public string RandomKeyId(Dictionary<string, string> Anno_DictionaryIDandEnglishDictionary, 
+        public string RandomKeyId(Dictionary<string, string> Anno_DictionaryIDandEnglishDictionary,
             RevitModelElements revit)
         {
             // Add new ID
             string newID = "1";
-            // if the newID if found in the dictionary create a new Id. 
+            // if the newID if found in the dictionary create a new Id.
             while (Anno_DictionaryIDandEnglishDictionary.ContainsKey(newID))
             {
                 newID = revit.RandomString(5);

@@ -13,8 +13,10 @@ namespace TranslationTool
     {
         public Dictionary<string, string> _IDandEnglishDictionary { get; set; }
         public Dictionary<string, string[]> _IDandArrayDictioinary { get; set; }
+
         // Dictionary to hold pretranslated items before they are in Revit.
         public Dictionary<string, string[]> _HoldDictioinary { get; set; }
+
         public List<string> CompareList { get; set; }
 
         //***********************************Read***********************************
@@ -100,7 +102,6 @@ namespace TranslationTool
             CompareList = compareList;
             return TranslationDictioinary_EnglishAndChinese;
         }
-  
 
         //***********************************Update***********************************
         public void Update(Dictionary<string, string[]> _IDandArrayDictioinary, List<string[]> NotTranslated, string path, int workSheet, string BuildingColor)
@@ -117,28 +118,28 @@ namespace TranslationTool
 
                 foreach (string[] array in NotTranslated)
                 {
-                    // If its part of a Z Sheet don't write to Excel. 
+                    // If its part of a Z Sheet don't write to Excel.
                     if (array[0].StartsWith("Z"))
                         continue;
-                    // If the english is empty don't write to Excel. 
+                    // If the english is empty don't write to Excel.
                     if (array[1] == "")
                         continue;
 
                     //Update existing cells in Excel.
-                    //Check if Id and Array dictionary is not empty. 
+                    //Check if Id and Array dictionary is not empty.
                     if (_IDandArrayDictioinary != null)
                     {
-                        //Check if the Id exist in the dictionary. 
+                        //Check if the Id exist in the dictionary.
                         if (_IDandArrayDictioinary.Keys.Contains(array[0]))
                         {
                             int r = 2;
-                            //Iterate over existing Excel rows. 
+                            //Iterate over existing Excel rows.
                             while (workSheet_Member.Cells[r, 1].Text != "")
                             {
                                 //If the Id matches the Excel Id update.
                                 if (workSheet_Member.Cells[r, 1].Text == array[0])
                                 {
-                                    // Update all values to match. 
+                                    // Update all values to match.
                                     UpdateRow(workSheet_Member, r, array, BuildingColor);
 
                                     continue;
@@ -284,10 +285,10 @@ namespace TranslationTool
 
         //***********************************ExcelColor***********************************
         public void ExcelColor(ExcelWorksheet workSheet_Member, int row, string BuildingColor)
-        {            
-            Color lightGreen = System.Drawing.Color.FromArgb(144,238,144);
-            Color lightYellow = System.Drawing.Color.FromArgb(255, 255, 153);
-            Color lightPurple = System.Drawing.Color.FromArgb(230, 230, 230);
+        {
+            Color lightGreen = System.Drawing.Color.FromArgb(144, 238, 144); // TW10
+            Color lightYellow = System.Drawing.Color.FromArgb(255, 255, 153); // PDM
+            Color lightPurple = System.Drawing.Color.FromArgb(230, 230, 230); //TW9
             if (BuildingColor != "")
             {
                 switch (BuildingColor)
@@ -295,9 +296,11 @@ namespace TranslationTool
                     case "1":
                         SetExcelColor(workSheet_Member, row, lightGreen);
                         break;
+
                     case "2":
                         SetExcelColor(workSheet_Member, row, lightYellow);
                         break;
+
                     case "3":
                         SetExcelColor(workSheet_Member, row, lightPurple);
                         break;
@@ -306,7 +309,6 @@ namespace TranslationTool
 
             if (BuildingColor == "")
             {
-                
             }
         }
 

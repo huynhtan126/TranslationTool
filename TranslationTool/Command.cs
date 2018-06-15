@@ -24,9 +24,9 @@ namespace TranslationTool
             Document doc = uidoc.Document;
 
             Translate translation = new Translate();
-            //string path = @"W:\S\BIM\Z-LINKED EXCEL\SOM-Chinese Translation.xlsx";
+            string path = @"W:\S\BIM\Z-LINKED EXCEL\SOM-Chinese Translation.xlsx";
             //used to debug.
-            string path = @"C:\SOM-Chinese Translation.xlsx";
+            //string path = @"C:\SOM-Chinese Translation.xlsx";
 
             //Project file path and name to track sheets annotations and titles.
             string centralFilePath = ModelPathUtils.ConvertModelPathToUserVisiblePath(doc.GetWorksharingCentralModelPath());
@@ -49,8 +49,8 @@ namespace TranslationTool
             // Dictionary of Key and Values from Excel
             Dictionary<string, string[]> Sheet_IDEnglishChineseDict = translation._Sheet_IDEnglishChineseDict;
             string BuildingName = doc.ProjectInformation.BuildingName;
-            //TODO Check parameter for Color and Chinses and English Translation if none exist add 
-            // parameter. 
+
+            // Get project paramter Author number to assign color. 
             var BuildingColor = doc.ProjectInformation.Author;
 
             //Annotation Excel Sheet
