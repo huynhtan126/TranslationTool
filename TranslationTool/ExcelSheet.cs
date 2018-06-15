@@ -2,6 +2,7 @@
 using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -14,7 +15,6 @@ namespace TranslationTool
         public Dictionary<string, string[]> _IDandArrayDictioinary { get; set; }
         // Dictionary to hold pretranslated items before they are in Revit.
         public Dictionary<string, string[]> _HoldDictioinary { get; set; }
-        private List<int> _ListToDelete { get; set; }
         public List<string> CompareList { get; set; }
 
         //***********************************Read***********************************
@@ -100,40 +100,10 @@ namespace TranslationTool
             CompareList = compareList;
             return TranslationDictioinary_EnglishAndChinese;
         }
+  
 
         //***********************************Update***********************************
-        public void Update(List<string> NotTranslated, string path, int workSheet)
-        {
-            try
-            {
-                var package = new ExcelPackage(new FileInfo(path));
-
-                ExcelWorksheet workSheet_Member = package.Workbook.Worksheets[workSheet];
-
-                //End of rows.
-                var end_Member = workSheet_Member.Dimension.End;
-                //End of row plus one to get the empty cell.
-                int row = end_Member.Row + 1;
-
-                foreach (string s in NotTranslated)
-                {
-                    workSheet_Member.Cells[row, 2].Value = s;
-                    row++;
-                }
-
-                // Close the Excel file.
-                package.Save();
-                package.Stream.Close();
-                package.Dispose();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Cannot open " + path + " for reading. Exception raised - " + ex.Message);
-            }
-        }
-
-        //***********************************Update***********************************
-        public void Update(List<string[]> NotTranslated, string path, int workSheet, string BuildingColor)
+        public void Update(Dictionary<string, string[]> _IDandArrayDictioinary, List<string[]> NotTranslated, string path, int workSheet, string BuildingColor)
         {
             try
             {
@@ -147,26 +117,38 @@ namespace TranslationTool
 
                 foreach (string[] array in NotTranslated)
                 {
+                    // If its part of a Z Sheet don't write to Excel. 
                     if (array[0].StartsWith("Z"))
-                    {
                         continue;
-                    }
-                    else
-                    {
-                        // Id cell
-                        workSheet_Member.Cells[row, 1].Value = array[0];
-                        // English cell
-                        workSheet_Member.Cells[row, 2].Value = array[1];
-                        // Chinese cell
-                        workSheet_Member.Cells[row, 3].Value = array[2];
-                        // Project Name
-                        if (BuildingColor != "")
-                        {
-                            workSheet_Member.Cells[row, 4].Value = array[3];
+                    // If the english is empty don't write to Excel. 
+                    if (array[1] == "")
+                        continue;
 
-                            ExcelColor(workSheet_Member, row, BuildingColor);
+                    //Update existing cells in Excel.
+                    //Check if Id and Array dictionary is not empty. 
+                    if (_IDandArrayDictioinary != null)
+                    {
+                        //Check if the Id exist in the dictionary. 
+                        if (_IDandArrayDictioinary.Keys.Contains(array[0]))
+                        {
+                            int r = 2;
+                            //Iterate over existing Excel rows. 
+                            while (workSheet_Member.Cells[r, 1].Text != "")
+                            {
+                                //If the Id matches the Excel Id update.
+                                if (workSheet_Member.Cells[r, 1].Text == array[0])
+                                {
+                                    // Update all values to match. 
+                                    UpdateRow(workSheet_Member, r, array, BuildingColor);
+
+                                    continue;
+                                }
+                            }
                         }
                     }
+                    //Append new item to Excel.
+                    UpdateRow(workSheet_Member, row, array, BuildingColor);
+
                     row++;
                 }
 
@@ -177,8 +159,23 @@ namespace TranslationTool
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Cannot open " + path + " for reading. Exception raised - " + ex.Message);
+                MessageBox.Show("Error" + path + " for reading. Exception raised - " + ex.Message);
             }
+        }
+
+        //***********************************UpdateRow***********************************
+        public void UpdateRow(ExcelWorksheet workSheet_Member, int row, string[] array, string BuildingColor)
+        {
+            // Id cell
+            workSheet_Member.Cells[row, 1].Value = array[0];
+            // English cell
+            workSheet_Member.Cells[row, 2].Value = array[1];
+            // Chinese cell
+            workSheet_Member.Cells[row, 3].Value = array[2];
+            // Project Name
+            workSheet_Member.Cells[row, 4].Value = array[3];
+            // Set color in Excel
+            ExcelColor(workSheet_Member, row, BuildingColor);
         }
 
         //***********************************Delete***********************************
@@ -287,26 +284,44 @@ namespace TranslationTool
 
         //***********************************ExcelColor***********************************
         public void ExcelColor(ExcelWorksheet workSheet_Member, int row, string BuildingColor)
-        {
-            Array colors = new Array();
-            colors = BuildingColor.Split(',');
-            if (BuildingName != "")
+        {            
+            Color lightGreen = System.Drawing.Color.FromArgb(144,238,144);
+            Color lightYellow = System.Drawing.Color.FromArgb(255, 255, 153);
+            Color lightPurple = System.Drawing.Color.FromArgb(230, 230, 230);
+            if (BuildingColor != "")
             {
-                // Id cell
-                workSheet_Member.Cells[row, 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                workSheet_Member.Cells[row, 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(colors[0],colors[1],colors[2]));
-                // English cell
-                workSheet_Member.Cells[row, 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                workSheet_Member.Cells[row, 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(colors[0],colors[1],colors[2]));
-                // Chinese cell
-                workSheet_Member.Cells[row, 3].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                workSheet_Member.Cells[row, 3].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(colors[0],colors[1],colors[2]));
+                switch (BuildingColor)
+                {
+                    case "1":
+                        SetExcelColor(workSheet_Member, row, lightGreen);
+                        break;
+                    case "2":
+                        SetExcelColor(workSheet_Member, row, lightYellow);
+                        break;
+                    case "3":
+                        SetExcelColor(workSheet_Member, row, lightPurple);
+                        break;
+                }
             }
 
-            if (BuildingName == "")
+            if (BuildingColor == "")
             {
                 
             }
+        }
+
+        //***********************************ExcelColor***********************************
+        public void SetExcelColor(ExcelWorksheet workSheet_Member, int row, Color color)
+        {
+            // Id cell
+            workSheet_Member.Cells[row, 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            workSheet_Member.Cells[row, 1].Style.Fill.BackgroundColor.SetColor(color);
+            // English cell
+            workSheet_Member.Cells[row, 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            workSheet_Member.Cells[row, 2].Style.Fill.BackgroundColor.SetColor(color);
+            // Chinese cell
+            workSheet_Member.Cells[row, 3].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            workSheet_Member.Cells[row, 3].Style.Fill.BackgroundColor.SetColor(color);
         }
     }
 }

@@ -82,19 +82,17 @@ namespace TranslationTool
                 }
 
                 //if the dictionary doesn't have translation add to Excel.
-                if (!Sheet_IDEnglishChineseDict.ContainsKey(sheetNumber) ||
-                    !Sheet_HoldDict.ContainsKey(sheetNumber))
-                {
-                    if (!SheetNameCompareList.Contains(sheetNumber))
-                    {
-                        string[] array = new string[4];
-                        array[0] = sheetNumber;
-                        array[1] = English;
-                        array[2] = Chinese;
-                        array[3] = centralFilePath;
-                        NotTranslated.Add(array);
-                    }
-                }
+                if (Sheet_IDEnglishChineseDict.ContainsKey(sheetNumber) == false)
+                    if(Sheet_HoldDict.ContainsKey(sheetNumber) == false)
+                        if (!SheetNameCompareList.Contains(sheetNumber))
+                        {
+                            string[] array = new string[4];
+                            array[0] = sheetNumber;
+                            array[1] = English;
+                            array[2] = Chinese;
+                            array[3] = centralFilePath;
+                            NotTranslated.Add(array);
+                        }
             }
 
             //if dictionary has elements that need to be removed.

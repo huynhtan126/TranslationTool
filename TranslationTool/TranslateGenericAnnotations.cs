@@ -90,57 +90,67 @@ namespace TranslationTool
 
                 if (Chinese == "" || Chinese == null)
                 {
-                    if (Excel_Anno_DictioinaryEnglishAndChinese.ContainsKey(English))
+                    if (English != "" || English != null)
                     {
-                        string ChineseValue = Excel_Anno_DictioinaryEnglishAndChinese[English];
-
-                        // Set Chinese translation.
-                        Transaction t = new Transaction(doc, "Translation");
-                        t.Start();
-                        // set in transaction.
-                        Chinese_param.Set(ChineseValue);
-                        // set id if set to none.
-                        if (id == "" || id == null)
+                        if (Excel_Anno_DictioinaryEnglishAndChinese.ContainsKey(English))
                         {
-                            //Check if key value exist in dictionary.
-                            string key = Excel_Anno_DictionaryIDandEnglishDictionary.FirstOrDefault(x => x.Value == English).Key;
-                            if (key != "" || key != null)
-                                somID_param.Set(key);
-                            //Generate a key if doesn't have one.
-                            if (key == "" || key == null)
+                            string ChineseValue = Excel_Anno_DictioinaryEnglishAndChinese[English];
+
+                            // Set Chinese translation.
+                            Transaction t = new Transaction(doc, "Translation");
+                            t.Start();
+                            // set in transaction.
+                            Chinese_param.Set(ChineseValue);
+                            // set id if set to none.
+                            if (id == "" || id == null)
                             {
-                                //Add new ID if no Id is assigned. 
-                                id = NewKeyId(Excel_Anno_DictionaryIDandEnglishDictionary, revit);
-                                somID_param.Set(id);
+                                //Check if key value exist in dictionary.
+                                string key = Excel_Anno_DictionaryIDandEnglishDictionary.FirstOrDefault(x => x.Value == English).Key;
+                                if (key != "" || key != null)
+                                    somID_param.Set(key);
+                                //Generate a key if doesn't have one.
+                                if (key == "" || key == null)
+                                {
+                                    //Add new ID if no Id is assigned. 
+                                    id = RandomKeyId(Excel_Anno_DictionaryIDandEnglishDictionary, revit);
+                                    somID_param.Set(id);
+                                    string[] array = new string[4];
+                                    array[0] = id;
+                                    array[1] = English;
+                                    array[2] = ChineseValue;
+                                    array[3] = "";
+                                    UpdateExcelTranslation.Add(array);
+                                }
+                            }
+                            t.Commit();
+                        }
+                    }
+
+                    // Check if the english has value. 
+                    if (English != "" || English != null)
+                    {
+                        //if the dictionary doesn't have translation add to Excel.
+                        if (!Excel_Anno_DictioinaryEnglishAndChinese.ContainsKey(English))
+                        {
+                            if (!AnnotationCompareList.Contains(English))
+                            {
+                                if (id == "" || id == null)
+                                {
+
+
+                                    //Add new ID if no Id is assigned. 
+                                    id = RandomKeyId(Excel_Anno_DictionaryIDandEnglishDictionary, revit);
+                                }
+
+
                                 string[] array = new string[4];
                                 array[0] = id;
                                 array[1] = English;
-                                array[2] = ChineseValue;
+                                array[2] = "";
                                 array[3] = "";
+
                                 UpdateExcelTranslation.Add(array);
-                            }                  
-                        }
-                        t.Commit();
-                    }
-
-                    //if the dictionary doesn't have translation add to Excel.
-                    if (!Excel_Anno_DictioinaryEnglishAndChinese.ContainsKey(English))
-                    {
-                        if (!AnnotationCompareList.Contains(English))
-                        {
-                            if (id == "" || id == null)
-                            {
-                                //Add new ID if no Id is assigned. 
-                                id = NewKeyId(Excel_Anno_DictionaryIDandEnglishDictionary, revit);
                             }
-
-                            string[] array = new string[4];
-                            array[0] = id;
-                            array[1] = English;
-                            array[2] = "";
-                            array[3] = "";
-
-                            UpdateExcelTranslation.Add(array);
                         }
                     }
                 }
@@ -153,7 +163,7 @@ namespace TranslationTool
             string groupName, string parameterName)
             {
             RevitParametersCheck revitParameters = new RevitParametersCheck();
-            Parameter newParameter = new Parameter();
+            Parameter newParameter;
 
             revitParameters.CreateSharedParameters(doc, app, BuiltInCategory.OST_GenericAnnotation, 
                 groupName, parameterName);
@@ -162,7 +172,7 @@ namespace TranslationTool
 }
 
         //***********************************NewKeyId***********************************
-        public string NewKeyId(Dictionary<string, string> Anno_DictionaryIDandEnglishDictionary, 
+        public string RandomKeyId(Dictionary<string, string> Anno_DictionaryIDandEnglishDictionary, 
             RevitModelElements revit)
         {
             // Add new ID

@@ -34,44 +34,47 @@ namespace TranslationTool
             translation.StartTranslation(doc, app, path, centralFilePath);
             // Annotations which are not translated. 
             List<string[]> UpdateExcelTranslationGenericAnno = translation._UpdateExcelTranslationGenericAnno;
+            Dictionary<string, string[]> Anno_IDandEnglishDictionary = new Dictionary<string,string[]>();
+
             // Title on sheets not translated
             List<string[]> NotTranslatedTitleOnSheet = translation._NotTranslatedTitleOnSheet;
             // Title on sheet which was on hold is found in Revit.
             List<string[]> HoldIsFoundInRevitTitleOnSheet = translation._HoldIsFoundInRevitTitleOnSheet;
+            // Dictionary of Key and Values from Excel
+            Dictionary<string, string[]> TitleOnSheet_IDEnglishChineseDict = translation._TitleOnSheet_IDEnglishChineseDict;
             // Sheet names not translated
             List<string[]> NotTranslatedSheets = translation._NotTranslatedSheets;
             // Sheet which is on hold is found in Revit.
             List<string[]> HoldIsFoundInRevitTSheets = translation._HoldIsFoundInRevitSheets;
-
-            //string BuildingName = doc.ProjectInformation.BuildingName;
+            // Dictionary of Key and Values from Excel
+            Dictionary<string, string[]> Sheet_IDEnglishChineseDict = translation._Sheet_IDEnglishChineseDict;
+            string BuildingName = doc.ProjectInformation.BuildingName;
             //TODO Check parameter for Color and Chinses and English Translation if none exist add 
             // parameter. 
-            string BuildingColor = doc.ProjectInformation.Author;
+            var BuildingColor = doc.ProjectInformation.Author;
 
             //Annotation Excel Sheet
             if (UpdateExcelTranslationGenericAnno.Count > 0)
             {
                 ExcelSheet Excel = new ExcelSheet();
-                Excel.Update(UpdateExcelTranslationGenericAnno, path, 1, "");
+                Excel.Update(Anno_IDandEnglishDictionary, UpdateExcelTranslationGenericAnno, path, 1, "");
             }
             //Title on Sheet Excel Sheet
             if (NotTranslatedTitleOnSheet.Count > 0)
             {
-                //ExcelSheet Excel = new ExcelSheet();
-                //Excel.Update(NotTranslatedTitleOnSheet, path, 2, BuildingColor);
+                // combine dictionarys to update Excel file. 
                 HoldIsFoundInRevitTitleOnSheet.AddRange(NotTranslatedTitleOnSheet);
             }
             //Title on Sheet Hold was found
             if (HoldIsFoundInRevitTitleOnSheet.Count > 0)
             {
                 ExcelSheet Excel = new ExcelSheet();
-                Excel.Update(HoldIsFoundInRevitTitleOnSheet, path, 2, BuildingColor);
+                Excel.Update(TitleOnSheet_IDEnglishChineseDict, HoldIsFoundInRevitTitleOnSheet, path, 2, BuildingColor);
             }
             //Sheet Name Excel Sheet
             if (NotTranslatedSheets.Count > 0)
             {
-                //ExcelSheet Excel = new ExcelSheet();
-                //Excel.Update(NotTranslatedSheets, path, 3, BuildingColor);
+                // combine dictionarys to update Excel file. 
                 HoldIsFoundInRevitTSheets.AddRange(NotTranslatedSheets);
             }
 
@@ -79,7 +82,7 @@ namespace TranslationTool
             if (HoldIsFoundInRevitTSheets.Count > 0)
             {
                 ExcelSheet Excel = new ExcelSheet();
-                Excel.Update(HoldIsFoundInRevitTSheets, path, 3, BuildingColor);
+                Excel.Update(Sheet_IDEnglishChineseDict, HoldIsFoundInRevitTSheets, path, 3, BuildingColor);
             }
             return Result.Succeeded;
         }

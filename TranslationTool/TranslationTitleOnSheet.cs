@@ -45,17 +45,21 @@ namespace TranslationTool
                         var viewType = v.ViewType.ToString();
                         Parameter titleOnSheetParam = v.LookupParameter("Title on Sheet");
                         Parameter titleOnSheetChineseParam = v.LookupParameter("Title on Sheet (Chinese)");
-                        string Chinese = revit.GetParameterValue(titleOnSheetChineseParam);
-                        string English = revit.GetParameterValue(titleOnSheetParam);
+                        string RvtChinese = revit.GetParameterValue(titleOnSheetChineseParam);
+                        string RvtEnglish = revit.GetParameterValue(titleOnSheetParam);
 
-                        //Check if the viewport is on a Z sheet.
+                        //Check if the viewport is on a Z sheet. 
+                        //If viewport is on Z sheet skip over it. 
                         if (viewportID.StartsWith("z") || viewportID.StartsWith("Z"))
                             continue;
 
+                        //Check if the title is in the database
                         if (TitleOnSheet_IDEnglishChineseDict.ContainsKey(viewportID))
                         {
                             string[] Values = TitleOnSheet_IDEnglishChineseDict[viewportID];
-                            if (Chinese == "" || Chinese == null)
+                            // If the Revit Chinese parameter is empty
+                            // set the value from the database
+                            if (RvtChinese == "" || RvtChinese == null)
                             {
                                 // Set English note.
                                 Transaction t = new Transaction(doc, "Translation by ID");
@@ -82,7 +86,7 @@ namespace TranslationTool
                             titleOnSheetParam.Set(Values[0]);
                             titleOnSheetChineseParam.Set(Values[1]);
                             t.Commit();
-                            //add center file path to values.
+                            // add center file path to values.
                             // add to update excel from Revit model.
                             string[] array = new string[4];
                             array[0] = viewportID;
@@ -94,19 +98,17 @@ namespace TranslationTool
                         }
 
                         //if the dictionary doesn't have translation add to Excel.
-                        if (!TitleOnSheet_IDEnglishChineseDict.ContainsKey(viewportID) ||
-                            !TitleOnSheet_HoldDict.ContainsKey(viewportID))
-                        {
-                            if (!TitleOnSheetCompareList.Contains(viewportID))
-                            {
-                                string[] array = new string[4];
-                                array[0] = viewportID;
-                                array[1] = English;
-                                array[2] = Chinese;
-                                array[3] = centralFilePath;
-                                NotTranslated.Add(array);
-                            }
-                        }
+                        if (TitleOnSheet_IDEnglishChineseDict.ContainsKey(viewportID) == false)
+                            if (TitleOnSheet_HoldDict.ContainsKey(viewportID) == false)
+                                if (!TitleOnSheetCompareList.Contains(viewportID))
+                                {
+                                    string[] array = new string[4];
+                                    array[0] = viewportID;
+                                    array[1] = RvtEnglish;
+                                    array[2] = RvtChinese;
+                                    array[3] = centralFilePath;
+                                    NotTranslated.Add(array);
+                                } 
                     }
                 }
                 catch (Exception ex)
@@ -132,8 +134,8 @@ namespace TranslationTool
             {
                 String[] values = entry.Value;
                 if (centralFilePath == values[2])
-                    if (!entry.Key.StartsWith("$")) //Temp views.
-                        DeleteFromExcel.Add(entry.Key, entry.Value);
+                    DeleteFromExcel.Add(entry.Key, entry.Value);
+                        
             }
             return DeleteFromExcel;
         }
