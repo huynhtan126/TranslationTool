@@ -66,9 +66,9 @@ namespace TranslationTool
 
             //Update ANNOTATION
             TranslateGenericAnnotations TGA = new TranslateGenericAnnotations();
-            if (_Anno_IDandEnglishDictionary != null)
-                TGA.SetEnglishAnnotationByID(doc, App,
-                    _Anno_IDandEnglishDictionary);
+            //if (_Anno_IDandEnglishDictionary != null)
+            //    TGA.SetEnglishAnnotationByID(doc, App,
+            //        _Anno_IDandEnglishDictionary);
 
             List<string[]> UpdateExcelTranslationGenericAnno = TGA.GenericAnnotationTranslation(doc, App,
                 Excel_Anno_DictioinaryEnglishAndChinese,

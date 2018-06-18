@@ -69,7 +69,7 @@ namespace TranslationWebDatabase.Controllers
 
             document.InsertOne(translationE2C_model);
 
-            return RedirectToAction("Index", "Home", new { area = "" }); ;
+            return RedirectToAction("Index");
         }
 
         //

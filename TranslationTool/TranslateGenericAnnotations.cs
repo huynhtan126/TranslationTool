@@ -9,55 +9,56 @@ namespace TranslationTool
     internal class TranslateGenericAnnotations
     {
         //***********************************GenericAnnotationTranslation***********************************
-        public void SetEnglishAnnotationByID(Document doc, Application app,
-            Dictionary<string, string> Anno_IDandEnglishDictionary)
-        {
-            RevitModelElements revit = new RevitModelElements();
+        //public void SetEnglishAnnotationByID(Document doc, Application app,
+        //    Dictionary<string, string> Anno_IDandEnglishDictionary)
+        //{
+        //    RevitModelElements revit = new RevitModelElements();
 
-            List<FamilyInstance> GenericAnnotations = revit.GetFamilyInstance(doc, "Translation", BuiltInCategory.OST_GenericAnnotation);
+        //    List<FamilyInstance> GenericAnnotations = revit.GetFamilyInstance(doc, "Translation", BuiltInCategory.OST_GenericAnnotation);
 
-            foreach (Element e in GenericAnnotations)
-            {
-                try
-                {
-                    //Get the parameters from the project
-                    Parameter somID_param = e.LookupParameter("SOM ID");
-                    Parameter English_param = e.LookupParameter("ENGLISH");
+        //    foreach (Element e in GenericAnnotations)
+        //    {
+        //        try
+        //        {
+        //            //Get the parameters from the project
+        //            Parameter somID_param = e.LookupParameter("SOM ID");
+        //            Parameter English_param = e.LookupParameter("ENGLISH");
 
-                    //Check if parameter exist in project.
-                    if (somID_param == null)
-                        somID_param = CheckIfSharedParamterExist(doc, app, e, "DYNAMO AND ADD-IN", "SOM ID");
-                    if (English_param == null)
-                        English_param = CheckIfSharedParamterExist(doc, app, e, "TRANSLATION", "ENGLISH");
+        //            //Check if parameter exist in project.
+        //            if (somID_param == null)
+        //                somID_param = CheckIfSharedParamterExist(doc, app, e, "DYNAMO AND ADD-IN", "SOM ID");
+        //            if (English_param == null)
+        //                English_param = CheckIfSharedParamterExist(doc, app, e, "TRANSLATION", "ENGLISH");
 
-                    //Get parameter values
-                    string id = revit.GetParameterValue(somID_param);
-                    string English = revit.GetParameterValue(English_param);
+        //            //Get parameter values
+        //            string id = revit.GetParameterValue(somID_param);
+        //            string English = revit.GetParameterValue(English_param);
 
-                    if (id != "")
-                    {
-                        //Check if database dictionary contains the Revit Id.
-                        if (Anno_IDandEnglishDictionary.ContainsKey(id))
-                        {
-                            string EnglishValue = Anno_IDandEnglishDictionary[id];
+        //            if (id != "")
+        //            {
+        //                //Check if database dictionary contains the Revit Id.
+        //                if (Anno_IDandEnglishDictionary.ContainsKey(id))
+        //                {
+        //                    string EnglishValue = Anno_IDandEnglishDictionary[id];
 
-                            // Set English note.
-                            Transaction t = new Transaction(doc, "English Note");
-                            t.Start();
-                            // Set english parameter.
-                            English_param.Set(EnglishValue);
-                            t.Commit();
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    //MessageBox.Show("Set English Annotation by ID Exception raised - " + ex.Message);
-                }
-            }
-        }
+        //                    // Set English note.
+        //                    Transaction t = new Transaction(doc, "English Note");
+        //                    t.Start();
+        //                    // Set english parameter.
+        //                    English_param.Set(EnglishValue);
+        //                    t.Commit();
+        //                }
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            //MessageBox.Show("Set English Annotation by ID Exception raised - " + ex.Message);
+        //        }
+        //    }
+        //}
 
         //***********************************GenericAnnotationTranslation***********************************
+
         public List<string[]> GenericAnnotationTranslation(Document doc, Application app,
             Dictionary<string, string> Excel_Anno_DictioinaryEnglishAndChinese,
             Dictionary<string, string> Excel_Anno_DictionaryIDandEnglishDictionary,

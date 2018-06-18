@@ -54,7 +54,7 @@ namespace TranslationWebDatabase.App_Start
             _collection.UpdateOne(
                 Builders<TranslationE2C_Model>.Filter.Eq("Id", translate.Id),
                 Builders<TranslationE2C_Model>.Update
-                .Set("ItemId", translate.ItemId)
+                .Set("Key", translate.Key)
                 .Set("English", translate.English)
                 .Set("Chinese", translate.Chinese)
                 );

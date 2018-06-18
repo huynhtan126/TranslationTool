@@ -8,8 +8,8 @@ namespace TranslationWebDatabase.Models
         [BsonId]
         public ObjectId Id { get; set; }
 
-        [BsonElement("ItemId")]
-        public string ItemId { get; set; }
+        [BsonElement("Key")]
+        public string Key { get; set; }
 
         [BsonElement("English")]
         public string English { get; set; }
