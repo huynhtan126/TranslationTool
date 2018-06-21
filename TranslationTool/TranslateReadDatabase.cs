@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace TranslationTool
 {
-    internal class Translate
+    internal class TranslateReadDatabase
     {
         //Viewport titles field.
+        public Dictionary<string, string[]> _AnnotationDatabase { get; set; }
         public Dictionary<string, string[]> _TitleOnSheet_IDEnglishChineseDict { get; set; }
-
         public Dictionary<string, string[]> _Sheet_IDEnglishChineseDict { get; set; }
-        public List<string[]> _UpdateExcelTranslationGenericAnno { get; set; }
+        public List<string[]> _UpdateDatabase_GenericAnnotation { get; set; }
         public List<string[]> _NotTranslatedTitleOnSheet { get; set; }
         public List<string[]> _NotTranslatedSheets { get; set; }
         public List<string[]> _HoldIsFoundInRevitSheets { get; set; }
@@ -26,11 +26,11 @@ namespace TranslationTool
             #region ANNOTATIONS
 
             //Dictionary of Annotations.  Key as English and value as Chinese.
-            Dictionary<string, string> Excel_Anno_DictioinaryEnglishAndChinese = Excel.Read(path, 1);
-            List<string> Excel_AnnotationCompareList = Excel.CompareList;
+            Dictionary<string, string[]> AnnotationDatabase = Excel.Read(path, 1);
+            //List<string> Excel_AnnotationCompareList = Excel.CompareList;
 
             //Dictionary of English words and Ids.
-            Dictionary<string, string> _Anno_IDandEnglishDictionary = Excel._IDandEnglishDictionary;
+            //Dictionary<string, string> _Anno_IDandEnglishDictionary = Excel._IDandEnglishDictionary;
 
             #endregion ANNOTATIONS
 
@@ -38,7 +38,7 @@ namespace TranslationTool
             #region TITLE ON SHEETS
 
             //Dicationary of title on sheets. Key as English and value as Chinese.
-            Dictionary<string, string> TitleOnSheetsDictionary = Excel.Read(path, 2);
+            Dictionary<string, string[]> TitleOnSheetsDictionary = Excel.Read(path, 2);
             List<string> TitleOnSheetCompareList = Excel.CompareList;
 
             //Dictionary of English words and Ids.
@@ -53,7 +53,7 @@ namespace TranslationTool
             #region SHEET NUMBER
 
             //Dictionary of Sheet names. Key as English and value as Chinese.
-            Dictionary<string, string> SheetsNameDictionary = Excel.Read(path, 3);
+            Dictionary<string, string[]> SheetsNameDictionary = Excel.Read(path, 3);
             List<string> SheetNameCompareList = Excel.CompareList;
 
             //Dictionary of English words and Ids.
@@ -70,10 +70,8 @@ namespace TranslationTool
             //    TGA.SetEnglishAnnotationByID(doc, App,
             //        _Anno_IDandEnglishDictionary);
 
-            List<string[]> UpdateExcelTranslationGenericAnno = TGA.GenericAnnotationTranslation(doc, App,
-                Excel_Anno_DictioinaryEnglishAndChinese,
-                _Anno_IDandEnglishDictionary,
-                Excel_AnnotationCompareList);
+            List<string[]> UpdateDatabase_GenericAnnotation = TGA.UpdateRevit_AnnotationsTranslation(doc, App,
+                AnnotationDatabase);
 
             //Update TITLE ON SHEETS
             TranslationTitleOnSheet TTOS = new TranslationTitleOnSheet();
@@ -94,7 +92,7 @@ namespace TranslationTool
 
             _HoldIsFoundInRevitSheets = TS._HoldIsFoundInRevitSheets;
             _HoldIsFoundInRevitTitleOnSheet = TTOS._HoldIsFoundInRevitTitleOnSheet;
-            _UpdateExcelTranslationGenericAnno = UpdateExcelTranslationGenericAnno;
+            _UpdateDatabase_GenericAnnotation = UpdateDatabase_GenericAnnotation;
         }
     }
 }

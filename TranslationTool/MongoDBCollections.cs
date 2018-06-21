@@ -11,7 +11,7 @@ namespace TranslationTool
 {
     class MongoDBCollections
     {
-        public MongoContext MongoDBCollections()
+        public MongoContext Collections()
         {
              MongoContext mongoContext = new MongoContext();
              return mongoContext;
@@ -19,7 +19,7 @@ namespace TranslationTool
 
         public List<TranslationE2C_Model> Read()
         {
-            MongoContext mongoContext = MongoDBCollections();
+            MongoContext mongoContext = Collections();
             List<TranslationE2C_Model> translationE2C_Model = mongoContext.findAll();
 
             return translationE2C_Model;

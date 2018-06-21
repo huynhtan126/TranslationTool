@@ -67,9 +67,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RevitModelElements.cs" />
     <Compile Include="RevitParametersCheck.cs" />
-    <Compile Include="Translate.cs" />
+    <Compile Include="TranslateReadDatabase.cs" />
     <Compile Include="TranslateGenericAnnotations.cs" />
     <Compile Include="TranslateSheets.cs" />
+    <Compile Include="TranslateUpdateDatabase.cs" />
     <Compile Include="TranslationTitleOnSheet.cs" />
   </ItemGroup>
   <ItemGroup>

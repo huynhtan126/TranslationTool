@@ -20,9 +20,9 @@ namespace TranslationTool
         public List<string> CompareList { get; set; }
 
         //***********************************Read***********************************
-        public Dictionary<string, string> Read(string path, int workSheet)
+        public Dictionary<string, string[]> Read(string path, int workSheet)
         {
-            Dictionary<string, string> TranslationDictioinary_EnglishAndChinese = new Dictionary<string, string>();
+            //Dictionary<string, string> TranslationDictioinary_EnglishAndChinese = new Dictionary<string, string>();
             Dictionary<string, string[]> TranslationDictioinary_IdAndArray = new Dictionary<string, string[]>();
             Dictionary<string, string> TranslationDictioinary_IdAndEnglish = new Dictionary<string, string>();
             //Dictionary to not delete but hold translation in Excel until the model item is created.
@@ -60,8 +60,8 @@ namespace TranslationTool
                         string project = workSheet_Member.Cells[row, 4].Text;
 
                         // dictionary for english and chinese.
-                        if (!TranslationDictioinary_EnglishAndChinese.ContainsKey(english))
-                            TranslationDictioinary_EnglishAndChinese.Add(english, chinese);
+                        //if (!TranslationDictioinary_EnglishAndChinese.ContainsKey(english))
+                            //TranslationDictioinary_EnglishAndChinese.Add(english, chinese);
 
                         // dictionary Id number to identify english word.
                         if (id != "" || id != null)
@@ -72,9 +72,8 @@ namespace TranslationTool
                         array[1] = chinese;
                         array[2] = project;
 
-                        //If the first Char is $ do not remove from Excel.
-                        //Added to new list to compare to project.
-                        if (project == "")
+                        //If the project is missing hold translation till 
+                        if (project == "" && workSheet.ToString() != "1")
                         {
                             TranslationDictioinary_Hold.Add(id, array);
                             continue;
@@ -100,7 +99,7 @@ namespace TranslationTool
             _HoldDictioinary = TranslationDictioinary_Hold;
 
             CompareList = compareList;
-            return TranslationDictioinary_EnglishAndChinese;
+            return TranslationDictioinary_IdAndArray;
         }
 
         //***********************************Update***********************************
