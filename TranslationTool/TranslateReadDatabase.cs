@@ -17,20 +17,18 @@ namespace TranslationTool
         public List<string[]> _HoldIsFoundInRevitTitleOnSheet { get; set; }
 
         //***********************************StartTranslation***********************************
-        public void StartTranslation(Document doc, Application App, string path, string centralFilePath)
+        public void ReadDatabase(Document doc, Application App, string path, string centralFilePath)
         {
             ExcelSheet Excel = new ExcelSheet();
+            //MongoDBCollections mongoDBCollections = new MongoDBCollections();
             //Check Excel file for duplicate items to be deleted.
             Excel.Delete(path, 1, 2);
+
             // Collect data for annotation 
             #region ANNOTATIONS
-
             //Dictionary of Annotations.  Key as English and value as Chinese.
             Dictionary<string, string[]> AnnotationDatabase = Excel.Read(path, 1);
-            //List<string> Excel_AnnotationCompareList = Excel.CompareList;
-
-            //Dictionary of English words and Ids.
-            //Dictionary<string, string> _Anno_IDandEnglishDictionary = Excel._IDandEnglishDictionary;
+            //Dictionary<string, string[]> annotationDatabase = mongoDBCollections.Read();
 
             #endregion ANNOTATIONS
 
@@ -66,10 +64,6 @@ namespace TranslationTool
 
             //Update ANNOTATION
             TranslateGenericAnnotations TGA = new TranslateGenericAnnotations();
-            //if (_Anno_IDandEnglishDictionary != null)
-            //    TGA.SetEnglishAnnotationByID(doc, App,
-            //        _Anno_IDandEnglishDictionary);
-
             List<string[]> UpdateDatabase_GenericAnnotation = TGA.UpdateRevit_AnnotationsTranslation(doc, App,
                 AnnotationDatabase);
 
@@ -93,6 +87,7 @@ namespace TranslationTool
             _HoldIsFoundInRevitSheets = TS._HoldIsFoundInRevitSheets;
             _HoldIsFoundInRevitTitleOnSheet = TTOS._HoldIsFoundInRevitTitleOnSheet;
             _UpdateDatabase_GenericAnnotation = UpdateDatabase_GenericAnnotation;
+            _AnnotationDatabase = AnnotationDatabase;
         }
     }
 }

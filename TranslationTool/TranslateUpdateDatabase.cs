@@ -16,7 +16,7 @@ namespace TranslationTool
             //Get data from the database to update. 
             TranslateReadDatabase readDatabase = new TranslateReadDatabase();
             //Translation for Annotations, Title on Sheets and Sheet Names
-            readDatabase.StartTranslation(doc, app, path, centralFilePath);
+            readDatabase.ReadDatabase(doc, app, path, centralFilePath);
 
             //Get Annotation data from database
             Dictionary<string, string[]> AnnotationDatabase = readDatabase._AnnotationDatabase;

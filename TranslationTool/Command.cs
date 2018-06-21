@@ -22,11 +22,10 @@ namespace TranslationTool
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Application app = uiapp.Application;
             Document doc = uidoc.Document;
-
             
-            //string path = @"W:\S\BIM\Z-LINKED EXCEL\SOM-Chinese Translation.xlsx";
+            string path = @"W:\S\BIM\Z-LINKED EXCEL\SOM-Chinese Translation.xlsx";
             //used to debug.
-            string path = @"C:\SOM-Chinese Translation.xlsx";
+            //string path = @"C:\SOM-Chinese Translation.xlsx";
 
             //Project file path and name to track sheets annotations and titles.
             string centralFilePath = ModelPathUtils.ConvertModelPathToUserVisiblePath(doc.GetWorksharingCentralModelPath());

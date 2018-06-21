@@ -59,10 +59,6 @@ namespace TranslationTool
                         string chinese = workSheet_Member.Cells[row, 3].Text;
                         string project = workSheet_Member.Cells[row, 4].Text;
 
-                        // dictionary for english and chinese.
-                        //if (!TranslationDictioinary_EnglishAndChinese.ContainsKey(english))
-                            //TranslationDictioinary_EnglishAndChinese.Add(english, chinese);
-
                         // dictionary Id number to identify english word.
                         if (id != "" || id != null)
                             TranslationDictioinary_IdAndEnglish.Add(id, english);
